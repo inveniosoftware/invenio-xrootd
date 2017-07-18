@@ -62,7 +62,7 @@ RUN pip install \
     pytest-runner \
     Sphinx
 
-RUN pip install XRootDPyFS fs Invenio-Files-REST[sqlite]
+RUN pip install XRootDPyFS "fs<2.0.0" Invenio-Files-REST[sqlite]
 
 # Add sources to `code` and work there:
 WORKDIR /code
