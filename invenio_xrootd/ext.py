@@ -53,4 +53,4 @@ class InvenioXRootD(object):
         if XROOTD_ENABLED:
             app.config['FILES_REST_STORAGE_FACTORY'] = \
                 'invenio_xrootd:eos_storage_factory'
-        app.extensions['inspire-xrootd'] = self
+        app.extensions['invenio-xrootd'] = self
