@@ -73,13 +73,19 @@ class XRootDFileStorage(PyFSFileStorage):
 
         return (fs, filename)
 
-    def checksum(self, chunk_size=None, progress_callback=None):
+    def checksum(self, chunk_size=None, progress_callback=None,
+                 use_default_impl=False):
         """Compute checksum of file.
 
         Queries the XRootD server to get checksum if possible, otherwise falls
         back to default Python implementation. The checksum algorithm used
         will be the one configured on the XRootD server.
         """
+        if use_default_impl:
+            return super(XRootDFileStorage, self).checksum(
+                chunk_size=chunk_size,
+                progress_callback=progress_callback,
+            )
         try:
             fs, path = self._get_fs()
             if not hasattr(fs, 'xrd_checksum'):

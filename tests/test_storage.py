@@ -73,6 +73,8 @@ def test_checksum_fallback(xrd_storage, eos_storage, file_md5):
 def test_checksum_xrd(xrd_storage_mocked, file_md5):
     """Test checksum."""
     assert xrd_storage_mocked.checksum() == 'adler32:{0}'.format(file_md5)
+    assert xrd_storage_mocked.checksum(
+        use_default_impl=True) == 'md5:{0}'.format(file_md5)
 
 
 def test_checksum_xrd_overwrite(app, xrd_storage_mocked, file_md5):
