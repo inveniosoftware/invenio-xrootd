@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2016-2019 CERN.
+# Copyright (C) 2016-2020 CERN.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -17,17 +17,12 @@ history = open('CHANGES.rst').read()
 
 tests_require = [
     'blinker>=1.4',
-    'coverage>=4.0',
-    'isort>=4.2.2',
-    'pydocstyle>=1.0.0',
-    'pytest-cov>=1.8.0',
-    'pytest-pep8>=1.0.6',
-    'pytest>=2.8.0',
+    'pytest-invenio>=1.4',
 ]
 
 extras_require = {
     'docs': [
-        'Sphinx>=1.4.2',
+        'Sphinx>=3',
     ],
     'tests': tests_require,
 }
@@ -36,9 +31,7 @@ extras_require['all'] = []
 for reqs in extras_require.values():
     extras_require['all'].extend(reqs)
 
-setup_requires = [
-    'pytest-runner>=2.6.2',
-]
+setup_requires = []
 
 install_requires = [
     'invenio-files-rest>=1.0.0a8',
@@ -88,8 +81,6 @@ setup(
         'Programming Language :: Python',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development :: Libraries :: Python Modules',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
-        'Development Status :: 3 - Alpha',
+        'Programming Language :: Python :: 3',
     ],
 )
