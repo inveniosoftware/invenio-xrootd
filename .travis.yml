@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2016-2019 CERN.
+# Copyright (C) 2016-2020 CERN.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-sudo: required
+notifications:
+  email: false
 
 language: python
 
@@ -18,19 +19,14 @@ env:
   - REQUIREMENTS=release
   - REQUIREMENTS=lowest
 
-cache:
-  - docker
-
 install:
   - "docker build -t xrootd ."
   - "docker run -h xrootdhost -t -u root xrootd pip install -r .travis-${REQUIREMENTS}-requirements.txt"
-  - "travis_retry pip install coveralls pydocstyle Sphinx twine wheel"
+  - "travis_retry pip install --upgrade pip"
+  - "travis_retry pip install setuptools py twine wheel coveralls requirements-builder"
 
 script:
   - "docker run -h xrootdhost -t xrootd"
 
 after_success:
   - coveralls
-
-notifications:
-  email: false
