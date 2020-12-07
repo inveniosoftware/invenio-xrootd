@@ -10,8 +10,8 @@
  Invenio-XRootD
 ================
 
-.. image:: https://img.shields.io/travis/inveniosoftware/invenio-xrootd.svg
-        :target: https://travis-ci.org/inveniosoftware/invenio-xrootd
+.. image:: https://github.com/inveniosoftware/invenio-xrootd/workflows/CI/badge.svg
+        :target: https://github.com/inveniosoftware/invenio-xrootd/actions
 
 .. image:: https://img.shields.io/coveralls/inveniosoftware/invenio-xrootd.svg
         :target: https://coveralls.io/r/inveniosoftware/invenio-xrootd
