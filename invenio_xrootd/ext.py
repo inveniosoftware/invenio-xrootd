@@ -8,15 +8,14 @@
 
 """Flask extension for Invenio-XRootD."""
 
-from __future__ import absolute_import, print_function
-
 from pkg_resources import DistributionNotFound, get_distribution
 
 try:
     # Import XRootDPyFS if available so that its
     # opener gets registered on PyFilesystem.
-    get_distribution('xrootdpyfs')
+    get_distribution("xrootdpyfs")
     import xrootdpyfs
+
     XROOTD_ENABLED = True
 except DistributionNotFound:
     XROOTD_ENABLED = False
@@ -33,8 +32,9 @@ class InvenioXRootD(object):
 
     def init_app(self, app):
         """Extension registration and configuration."""
-        app.config['XROOTD_ENABLED'] = XROOTD_ENABLED
+        app.config["XROOTD_ENABLED"] = XROOTD_ENABLED
         if XROOTD_ENABLED:
-            app.config['FILES_REST_STORAGE_FACTORY'] = \
-                'invenio_xrootd:eos_storage_factory'
-        app.extensions['invenio-xrootd'] = self
+            app.config[
+                "FILES_REST_STORAGE_FACTORY"
+            ] = "invenio_xrootd:eos_storage_factory"
+        app.extensions["invenio-xrootd"] = self

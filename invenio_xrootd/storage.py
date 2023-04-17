@@ -8,15 +8,12 @@
 
 """XRootD file storage interface."""
 
-from __future__ import absolute_import, print_function
-
 from functools import wraps
 
 from flask import current_app
-from fs.errors import UnsupportedError
+from fs.errors import Unsupported
 from fs.path import basename, dirname
-from invenio_files_rest.storage.pyfs import PyFSFileStorage, \
-    pyfs_storage_factory
+from invenio_files_rest.storage.pyfs import PyFSFileStorage, pyfs_storage_factory
 from xrootdpyfs import XRootDPyFS
 
 from .errors import SizeRequiredError
@@ -28,22 +25,22 @@ class XRootDFileStorage(PyFSFileStorage):
     XRootD v3.x are only capable of reporting adler32 checksums, even though
     that the storage system will report e.g. a MD5 checksums. If this is the
     case, set the configuration variable ``XROOTD_CHECKSUM_ALOG`` to overwrite
-    the alogrithm name reported by the XRootD server.
+    the algorithm name reported by the XRootD server.
     """
 
     def __init__(self, fileurl, **kwargs):
         """Initialize file storage object."""
         # Overwrite reported checksum algorithm.
-        self.checksum_algo = current_app.config.get(
-            'XROOTD_CHECKSUM_ALGO') if current_app else None
-        super(XRootDFileStorage, self).__init__(fileurl, **kwargs)
+        self.checksum_algo = (
+            current_app.config.get("XROOTD_CHECKSUM_ALGO") if current_app else None
+        )
+        super().__init__(fileurl, **kwargs)
 
     def _get_fs(self, create_dir=True, query=None):
         """Get PyFilesystem instance and path."""
         # Fall-back to PyFS in case of non-xrootd URL
-        if not self.fileurl.startswith(('root://', 'roots://')):
-            return super(XRootDFileStorage, self)._get_fs(
-                create_dir=create_dir)
+        if not self.fileurl.startswith(("root://", "roots://")):
+            return super()._get_fs(create_dir=create_dir)
         filedir = dirname(self.fileurl)
         filename = basename(self.fileurl)
 
@@ -53,12 +50,11 @@ class XRootDFileStorage(PyFSFileStorage):
             fs = XRootDPyFS(filedir, query)
 
         if create_dir:
-            fs.makedir('', recursive=True, allow_recreate=True)
+            fs.makedir("", recursive=True, allow_recreate=True)
 
         return (fs, filename)
 
-    def checksum(self, chunk_size=None, progress_callback=None,
-                 use_default_impl=False):
+    def checksum(self, chunk_size=None, progress_callback=None, use_default_impl=False):
         """Compute checksum of file.
 
         Queries the XRootD server to get checksum if possible, otherwise falls
@@ -66,18 +62,18 @@ class XRootDFileStorage(PyFSFileStorage):
         will be the one configured on the XRootD server.
         """
         if use_default_impl:
-            return super(XRootDFileStorage, self).checksum(
+            return super().checksum(
                 chunk_size=chunk_size,
                 progress_callback=progress_callback,
             )
         try:
             fs, path = self._get_fs()
-            if not hasattr(fs, 'xrd_checksum'):
-                raise UnsupportedError()
+            if not hasattr(fs, "xrd_checksum"):
+                raise Unsupported()
             algo, val = fs.xrd_checksum(path)
-            return u'{0}:{1}'.format(self.checksum_algo or algo, val)
-        except UnsupportedError:
-            return super(XRootDFileStorage, self).checksum(
+            return "{0}:{1}".format(self.checksum_algo or algo, val)
+        except Unsupported:
+            return super().checksum(
                 chunk_size=chunk_size,
                 progress_callback=progress_callback,
             )
@@ -85,17 +81,19 @@ class XRootDFileStorage(PyFSFileStorage):
 
 def ensure_bookingsize(with_arg=False):
     """Decorator to set ``eos.bookingsize``."""
+
     def decorator(f):
         @wraps(f)
         def inner(self, *args, **kwargs):
-            self.set_bookingsize(kwargs.get(
-                'size',
-                args[0] if args and with_arg else None
-            ))
+            self.set_bookingsize(
+                kwargs.get("size", args[0] if args and with_arg else None)
+            )
             res = f(self, *args, **kwargs)
             self.bookingsize = None
             return res
+
         return inner
+
     return decorator
 
 
@@ -116,10 +114,10 @@ class EOSFileStorage(XRootDFileStorage):
     def __init__(self, fileurl, default_booking_size=None, **kwargs):
         """Initialize storage."""
         self.bookingsize = None
-        self.default_booking_size = default_booking_size or \
-            (current_app.config.get('MAX_CONTENT_LENGTH') if current_app
-             else None)
-        super(EOSFileStorage, self).__init__(fileurl, **kwargs)
+        self.default_booking_size = default_booking_size or (
+            current_app.config.get("MAX_CONTENT_LENGTH") if current_app else None
+        )
+        super().__init__(fileurl, **kwargs)
 
     def set_bookingsize(self, size):
         """Set EOS booking size.
@@ -135,10 +133,9 @@ class EOSFileStorage(XRootDFileStorage):
         """Get PyFilesystem instance and path."""
         query = {}
         if self.bookingsize:
-            query['eos.bookingsize'] = self.bookingsize
+            query["eos.bookingsize"] = self.bookingsize
 
-        return super(EOSFileStorage, self)._get_fs(create_dir=create_dir,
-                                                   query=query)
+        return super()._get_fs(create_dir=create_dir, query=query)
 
     @ensure_bookingsize(with_arg=True)
     def initialize(self, *args, **kwargs):
@@ -147,7 +144,7 @@ class EOSFileStorage(XRootDFileStorage):
         Set the ``eos.bookingsize`` variable in the root URL, to ensure EOS
         allocates the file to a disk server with enough space.
         """
-        return super(EOSFileStorage, self).initialize(*args, **kwargs)
+        return super().initialize(*args, **kwargs)
 
     @ensure_bookingsize()
     def save(self, *args, **kwargs):
@@ -156,20 +153,14 @@ class EOSFileStorage(XRootDFileStorage):
         Set the ``eos.bookingsize`` variable in the root URL, to ensure EOS
         allocates the file to a disk server with enough space.
         """
-        return super(EOSFileStorage, self).save(*args, **kwargs)
+        return super().save(*args, **kwargs)
 
 
 def xrootd_storage_factory(**kwargs):
     """File storage factory for XRootD."""
-    return pyfs_storage_factory(
-        filestorage_class=XRootDFileStorage,
-        **kwargs
-    )
+    return pyfs_storage_factory(filestorage_class=XRootDFileStorage, **kwargs)
 
 
 def eos_storage_factory(**kwargs):
     """File storage factory for EOS."""
-    return pyfs_storage_factory(
-        filestorage_class=EOSFileStorage,
-        **kwargs
-    )
+    return pyfs_storage_factory(filestorage_class=EOSFileStorage, **kwargs)

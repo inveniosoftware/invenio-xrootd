@@ -9,8 +9,6 @@
 
 """Pytest configuration."""
 
-from __future__ import absolute_import, print_function
-
 import hashlib
 import shutil
 import tempfile
@@ -29,21 +27,19 @@ def BytesIO():
     """IO instance."""
     try:
         from io import BytesIO
+
         return BytesIO
     except ImportError:
         from StringIO import StringIO
+
         return StringIO
 
 
 @pytest.yield_fixture()
 def app():
     """Flask application fixture."""
-    app = Flask('testapp')
-    app.config.update(
-        TESTING=True,
-        MAX_CONTENT_LENGTH=10,
-        XROOTD_CHECKSUM_ALGO='md5'
-    )
+    app = Flask("testapp")
+    app.config.update(TESTING=True, MAX_CONTENT_LENGTH=10, XROOTD_CHECKSUM_ALGO="md5")
     with app.app_context():
         yield app
 
@@ -66,7 +62,7 @@ def tmppath():
 @pytest.fixture
 def file_path(tmppath):
     """File path."""
-    return join(tmppath, 'a/b/testfile')
+    return join(tmppath, "a/b/testfile")
 
 
 @pytest.fixture
@@ -79,8 +75,8 @@ def file_url(file_path, mkurl):
 def file_content(file_path):
     """File content."""
     makedirs(dirname(file_path))
-    data = b'test'
-    with open(file_path, 'wb') as fp:
+    data = b"test"
+    with open(file_path, "wb") as fp:
         fp.write(data)
     return data
 
@@ -117,7 +113,7 @@ def xrd_storage_mocked(file_url, file_md5):
         fs, filename = f(*args, **kwargs)
 
         def xrd_checksum(*args, **kwargs):
-            return 'adler32', file_md5
+            return "adler32", file_md5
 
         fs.xrd_checksum = xrd_checksum
         return fs, filename
@@ -136,6 +132,7 @@ def eos_storage(file_url):
 @pytest.fixture
 def file_instance_mock(file_url):
     """Mock of a file instance."""
+
     class FileInstance(object):
         def __init__(self, **kwargs):
             for k, v in kwargs.items():
