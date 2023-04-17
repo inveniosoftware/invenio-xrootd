@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2020 CERN.
+# Copyright (C) 2020-2023 CERN.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -28,37 +28,19 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-          python-version: [3.8]
-          requirements-level: [min, pypi]
+        include:
+          - xrootd-version: 4.12.7
+            cmake: cmake3
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v2
-        with:
-          python-version: ${{ matrix.python-version }}
-
-      - name: Generate dependencies
-        run: |
-          docker build -t xrootd .
-          docker run -h xrootdhost -t -u root xrootd pip install -r .travis-${{ matrix.requirements-level }}-requirements.txt
-          python -m pip install --upgrade pip setuptools py wheel requirements-builder
-          requirements-builder -e all --level=${{ matrix.requirements-level }} setup.py > .${{ matrix.requirements-level }}-${{ matrix.python-version }}-requirements.txt
-
-      - name: Cache pip
-        uses: actions/cache@v2
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('.${{ matrix.requirements-level }}-${{ matrix.python-version }}-requirements.txt') }}
-
-      - name: Install dependencies
-        run: |
-          pip install -r .${{ matrix.requirements-level }}-${{ matrix.python-version }}-requirements.txt
-          pip install .[all]
-          pip freeze
+      - name: Build Docker image
+        run: docker build -t invxrootd --build-arg xrootd_version=$XROOTD_VERSION --build-arg cmake=$CMAKE --progress=plain .
+        env:
+          XROOTD_VERSION: ${{ matrix.xrootd-version }}
+          CMAKE: ${{ matrix.cmake }}
 
       - name: Run tests
-        run: |
-          docker run -h xrootdhost -t xrootd
+        run: docker run -h xrootdhost -t invxrootd

@@ -8,8 +8,6 @@
 
 """XRootD file storage interface."""
 
-from __future__ import absolute_import, print_function
-
 from invenio_files_rest.errors import FilesException
 
 
@@ -17,4 +15,4 @@ class SizeRequiredError(FilesException):
     """Error thrown if no size is provided."""
 
     code = 400
-    description = 'Size of file must be provided.'
+    description = "Size of file must be provided."

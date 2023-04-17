@@ -57,18 +57,21 @@ ticket valid. The XRootD python bindings will transparently use this Kerberos
 ticket to authenticate against your server.
 """
 
-from __future__ import absolute_import, print_function
-
 from .errors import SizeRequiredError
-from .storage import EOSFileStorage, XRootDFileStorage, eos_storage_factory, \
-    xrootd_storage_factory
-from .version import __version__
+from .storage import (
+    EOSFileStorage,
+    XRootDFileStorage,
+    eos_storage_factory,
+    xrootd_storage_factory,
+)
+
+__version__ = "1.0.0a6"
 
 __all__ = (
-    '__version__',
-    'eos_storage_factory',
-    'EOSFileStorage',
-    'SizeRequiredError',
-    'xrootd_storage_factory',
-    'XRootDFileStorage',
+    "__version__",
+    "eos_storage_factory",
+    "EOSFileStorage",
+    "SizeRequiredError",
+    "xrootd_storage_factory",
+    "XRootDFileStorage",
 )
