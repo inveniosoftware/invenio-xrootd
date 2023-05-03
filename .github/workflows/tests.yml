@@ -29,7 +29,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - xrootd-version: 4.12.7
+          - xrootd-version: [4.12.7, 5.5.4]
             cmake: cmake3
 
     steps:
