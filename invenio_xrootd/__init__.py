@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of Invenio.
-# Copyright (C) 2016-2019 CERN.
+# Copyright (C) 2016-2023 CERN.
 #
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -65,7 +65,7 @@ from .storage import (
     xrootd_storage_factory,
 )
 
-__version__ = "2.0.0a1"
+__version__ = "2.0.0a2"
 
 __all__ = (
     "__version__",
