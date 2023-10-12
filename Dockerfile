@@ -19,6 +19,7 @@ RUN dnf update -y
 # CRB (Code Ready Builder): equivalent repository to well-known CentOS PowerTools
 RUN dnf install -y yum-utils
 RUN dnf config-manager --set-enabled crb
+RUN dnf config-manager --add-repo https://cern.ch/xrootd/xrootd.repo
 
 # Install Python 3.9
 RUN dnf install -y python3-devel
