@@ -32,9 +32,9 @@ class InvenioXRootD(object):
 
     def init_app(self, app):
         """Extension registration and configuration."""
-        app.config["XROOTD_ENABLED"] = XROOTD_ENABLED
+        app.config.setdefault("XROOTD_ENABLED", XROOTD_ENABLED)
         if XROOTD_ENABLED:
-            app.config[
-                "FILES_REST_STORAGE_FACTORY"
-            ] = "invenio_xrootd:eos_storage_factory"
+            app.config.setdefault(
+                "FILES_REST_STORAGE_FACTORY", "invenio_xrootd:eos_storage_factory"
+            )
         app.extensions["invenio-xrootd"] = self
