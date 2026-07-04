@@ -1,0 +1,73 @@
+# SPDX-FileCopyrightText: 2016-2023 CERN.
+# SPDX-FileCopyrightText: 2026 TU Wien.
+# SPDX-License-Identifier: MIT
+
+[project]
+name = "invenio-xrootd"
+description = "XRootD file storage support for Invenio."
+readme = "README.rst"
+requires-python = ">=3.7"
+license = "MIT"
+authors = [
+  { name = "CERN", email = "info@inveniosoftware.org" },
+]
+keywords = [
+  "invenio",
+  "xrootd",
+]
+classifiers = [
+  "Environment :: Web Environment",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+dependencies = [
+  "invenio-files-rest>=1.3.0",
+  "xrootdpyfs>=2.0.0a1",
+]
+dynamic = ["version"]
+
+[project.urls]
+Homepage = "https://github.com/inveniosoftware/invenio-xrootd"
+
+[project.entry-points."invenio_base.api_apps"]
+invenio_xrootd = "invenio_xrootd.ext:InvenioXRootD"
+
+[project.entry-points."invenio_base.apps"]
+invenio_xrootd = "invenio_xrootd.ext:InvenioXRootD"
+
+[project.optional-dependencies]
+tests = [
+  "invenio-db>=1.0.13,<2.0",
+  "mock>=4.0.0",
+  "pytest-black>=0.3.0",
+  "pytest-invenio>=1.4.5",
+  "Sphinx>=4.2.0,<6",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.version]
+path = "invenio_xrootd/__init__.py"
+
+[tool.hatch.build.targets.sdist]
+include = [
+  "/invenio_xrootd",
+]
+
+[tool.isort]
+profile = "black"
+
+[tool.pydocstyle]
+add_ignore = "D401"
+
+[tool.pytest.ini_options]
+addopts = '--black --isort --pydocstyle --doctest-glob="*.rst" --doctest-modules --cov=invenio_xrootd --cov-report=term-missing'
+testpaths = "tests invenio_xrootd"
+live_server_scope = "module"
