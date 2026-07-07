@@ -24,26 +24,5 @@ on:
         default: 'Manual trigger'
 
 jobs:
-  Tests:
-    runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        # empty string "" is for latest
-        xrootd-version: [
-          5.5.5,
-          5.6.2,
-          ""
-        ]
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Build Docker image
-        run: docker build -t invxrootd --build-arg xrootd_version=$XROOTD_VERSION --progress=plain .
-        env:
-          XROOTD_VERSION: ${{ matrix.xrootd-version }}
-          CMAKE: ${{ matrix.cmake }}
-
-      - name: Run tests
-        run: docker run -h xrootdhost -t invxrootd
+  Python:
+    uses: inveniosoftware/workflows/.github/workflows/tests-python.yml@master
