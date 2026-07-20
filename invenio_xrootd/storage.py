@@ -6,10 +6,9 @@
 from functools import wraps
 
 from flask import current_app
-from fs.errors import Unsupported
-from fs.path import basename, dirname
 from invenio_files_rest.storage.pyfs import PyFSFileStorage, pyfs_storage_factory
 from xrootdpyfs import XRootDPyFS
+from xrootdpyfs._pyfs_compat import Unsupported, basename, dirname
 
 from .errors import SizeRequiredError
 
@@ -64,7 +63,7 @@ class XRootDFileStorage(PyFSFileStorage):
         try:
             fs, path = self._get_fs()
             if not hasattr(fs, "xrd_checksum"):
-                raise Unsupported()
+                raise Unsupported
             algo, val = fs.xrd_checksum(path)
             return "{0}:{1}".format(self.checksum_algo or algo, val)
         except Unsupported:

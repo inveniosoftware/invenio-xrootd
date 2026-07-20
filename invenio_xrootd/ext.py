@@ -3,21 +3,16 @@
 
 """Flask extension for Invenio-XRootD."""
 
-from pkg_resources import DistributionNotFound, get_distribution
-
 try:
-    # Import XRootDPyFS if available so that its
-    # opener gets registered on PyFilesystem.
-    get_distribution("xrootdpyfs")
     import xrootdpyfs
 
     XROOTD_ENABLED = True
-except DistributionNotFound:
+except ModuleNotFoundError:
     XROOTD_ENABLED = False
     xrootdpyfs = None
 
 
-class InvenioXRootD(object):
+class InvenioXRootD:
     """Invenio-XRootD extension."""
 
     def __init__(self, app=None):
