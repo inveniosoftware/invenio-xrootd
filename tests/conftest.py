@@ -30,7 +30,7 @@ def BytesIO():
         return StringIO
 
 
-@pytest.yield_fixture()
+@pytest.fixture
 def app():
     """Flask application fixture."""
     app = Flask("testapp")
@@ -45,7 +45,7 @@ def mkurl():
     return lambda p: "root://localhost/{0}".format(p)
 
 
-@pytest.yield_fixture
+@pytest.fixture
 def tmppath():
     """Temporary path."""
     path = tempfile.mkdtemp()

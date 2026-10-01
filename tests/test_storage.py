@@ -3,9 +3,15 @@
 
 """Storage tests."""
 
-from os.path import exists
+from os.path import exists, join
 
 import pytest
+from xrootdpyfs._pyfs_compat import (
+    DirectoryNotEmpty,
+    ResourceNotFound,
+    basename,
+    dirname,
+)
 
 from invenio_xrootd import (
     EOSFileStorage,
@@ -83,6 +89,24 @@ def test_get_fs_ospath(xrd_storage_ospath, file_path):
     assert exists(file_path)
 
 
+def test_xrootd_delete_files(xrd_storage, file_path, file_url):
+    """Test delete a file."""
+    filedir = dirname(file_path)
+    filedir_url = dirname(file_url)
+
+    xrd_storage.initialize(10)
+    assert exists(file_path)
+    assert exists(filedir)
+
+    assert xrd_storage.delete() is True
+    assert not exists(file_path)
+
+    not_existing = join(filedir_url, "notfound")
+    assert not exists(join(filedir, "notfound"))
+    notfound_storage = XRootDFileStorage(not_existing)
+    pytest.raises(ResourceNotFound, notfound_storage.delete)
+
+
 def test_eos_initialize(eos_storage, file_path, file_url):
     """Test checksum overwrite."""
     assert not exists(file_path)
@@ -111,3 +135,21 @@ def test_eos_default_bookingsize(app, eos_storage, file_path, file_url, BytesIO)
     assert exists(file_path)
     eos_storage.save(BytesIO(b"a" * (max_len + 1)), size=max_len + 1)
     assert exists(file_path)
+
+
+def test_eos_delete_files(eos_storage, file_path, file_url):
+    """Test delete a file."""
+    filedir = dirname(file_path)
+    filedir_url = dirname(file_url)
+
+    eos_storage.initialize(10)
+    assert exists(file_path)
+    assert exists(filedir)
+
+    assert eos_storage.delete() is True
+    assert not exists(file_path)
+
+    not_existing = join(filedir_url, "notfound")
+    assert not exists(join(filedir, "notfound"))
+    notfound_storage = EOSFileStorage(not_existing)
+    pytest.raises(ResourceNotFound, notfound_storage.delete)

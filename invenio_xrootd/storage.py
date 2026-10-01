@@ -8,7 +8,7 @@ from functools import wraps
 from flask import current_app
 from invenio_files_rest.storage.pyfs import PyFSFileStorage, pyfs_storage_factory
 from xrootdpyfs import XRootDPyFS
-from xrootdpyfs._pyfs_compat import Unsupported, basename, dirname
+from xrootdpyfs._pyfs_compat import basename, dirname
 
 from .errors import SizeRequiredError
 
@@ -60,17 +60,22 @@ class XRootDFileStorage(PyFSFileStorage):
                 chunk_size=chunk_size,
                 progress_callback=progress_callback,
             )
-        try:
-            fs, path = self._get_fs()
-            if not hasattr(fs, "xrd_checksum"):
-                raise Unsupported
-            algo, val = fs.xrd_checksum(path)
-            return "{0}:{1}".format(self.checksum_algo or algo, val)
-        except Unsupported:
+
+        fs, filename = self._get_fs(create_dir=False)
+
+        if not hasattr(fs, "xrd_checksum"):
             return super().checksum(
                 chunk_size=chunk_size,
                 progress_callback=progress_callback,
             )
+
+        algo, val = fs.xrd_checksum(filename)
+        return "{0}:{1}".format(self.checksum_algo or algo, val)
+
+    def delete(self):
+        """Return True if the file was deleted, raise an error otherwise."""
+        fs, filename = self._get_fs(create_dir=False)
+        return fs.remove(filename)
 
 
 def ensure_bookingsize(with_arg=False):

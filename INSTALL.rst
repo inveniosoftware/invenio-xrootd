@@ -26,20 +26,21 @@ Build the image:
 
 .. code-block:: console
 
-   $ docker build --platform linux/amd64 --build-arg xrootd_version=4.12.7  -t invxrootd --progress=plain .
+   $ docker build --platform linux/amd64 --build-arg xrootd_version=5.9.8  -t invxrootd --progress=plain .
 
-Run the container:
+Run the container and launch the XRootD server:
 
 .. code-block:: console
 
    $ docker run --platform linux/amd64 -h invxrootd -it -v <absolute path to this project>:/code invxrootd bash
+   [invxrootd@invxrootd code]$ xrootd
 
-You will the logs in the stdout. Next, in another shell, connect the container
-and fire up an ipython shell:
+You will see the logs in the stdout. Next, in another shell, connect the container
+and run the tests:
 
 .. code-block:: console
 
    $ docker ps  # find the container id
    $ docker exec -it <container-id> bash
-   [invxrootd@invxrootd code]$ ipython
+   [invxrootd@invxrootd code]$ python -m pytest
 
