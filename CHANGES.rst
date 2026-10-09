@@ -2,10 +2,12 @@
     SPDX-FileCopyrightText: 2016-2023 CERN.
     SPDX-License-Identifier: MIT
 
-
-
 Changes
 =======
+
+Version v3.1.0 (released 2026-10-09)
+
+- feat: add support for files deletion
 
 Version v3.0.0 (released 2026-09-24)
 
